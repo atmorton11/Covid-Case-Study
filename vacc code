@@ -1,0 +1,25 @@
+--Let's view our Covid vaccinations dataset
+
+SELECT *
+FROM `covid_deaths.covid_vaccinations`
+;
+
+--Join the two datasets
+
+SELECT *
+FROM `covid_deaths.covid_deaths` dea 
+  JOIN covid_deaths.covid_vaccinations vacc
+  ON dea.location = vacc.location 
+  AND dea.date = vacc.date 
+  ;
+  
+  --Total population vs vaccinations
+  
+SELECT dea.continent, dea.location, dea.date, dea.population, vacc.new_vaccinations, SUM(vacc.new_vaccinations) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) AS RollingVaccCount
+FROM `covid_deaths.covid_deaths` dea 
+  JOIN covid_deaths.covid_vaccinations vacc
+  ON dea.location = vacc.location 
+  AND dea.date = vacc.date 
+  WHERE dea.continent IS NOT NULL
+  ORDER BY 2, 3
+  ;
